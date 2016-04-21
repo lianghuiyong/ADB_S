@@ -1,5 +1,7 @@
 package com.tyky.adb.Utils;
 
+import java.nio.ByteBuffer;
+
 /**
  * Created by lenovo on 2016/4/20.
  */
@@ -42,4 +44,24 @@ public class DataUtils {
         System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
         return byte_3;
     }
+
+    public static String ByteBufferToString(ByteBuffer dst) {
+        String ret = null;
+        if (dst != null) {
+            dst.flip();
+            byte[] tempb = new byte[dst.limit()];
+            dst.get(tempb);
+            ret = new String(tempb);
+        }
+        return ret;
+    }
+
+    public static ByteBuffer StringToByteBuffer(String s) {
+        ByteBuffer other = null;
+        if (s != null) {
+            other = ByteBuffer.wrap(s.getBytes());
+        }
+        return other;
+    }
+
 }
