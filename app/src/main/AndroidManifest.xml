@@ -21,8 +21,11 @@
         <receiver
             android:name=".Broadcast.BootBroadcast">
             <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-            <category android:name="android.intent.category.HOME" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.HOME" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <action android:name="android.intent.action.MEDIA_EJECT"/>
             </intent-filter>
         </receiver>
     </application>
