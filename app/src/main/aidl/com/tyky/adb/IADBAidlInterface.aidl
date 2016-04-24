@@ -9,6 +9,7 @@ interface IADBAidlInterface {
      * and return values in AIDL.
      */
 
+    void setBootUP(boolean BootUP);
     void sendJData(String strJ);
     String recvJData();
 }
