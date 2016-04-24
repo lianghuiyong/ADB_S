@@ -62,13 +62,14 @@ public class ADBService extends Service{
                     isRun = true;
                     while (isRun){
                         try {
-                            Log.d(TAG,"serverSocket.accept()");
+                            Log.d(TAG,"监听客户端连接");
                             client = serverSocket.accept();
                             date_In = new BufferedReader(new InputStreamReader(client.getInputStream()));
                             date_Out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
                             Log.d(TAG,"client is connect :"+client);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            //e.printStackTrace();
+                            Log.d(TAG,"服务器关闭");
                         }
                     }
                 }
@@ -83,14 +84,16 @@ public class ADBService extends Service{
     public void onDestroy() {
         try {
             dataBinder = null;                //binder置空
+            isRun = false;
             serverSocket.close();             //关闭服务器socket
             Log.d(TAG,"解绑adb service");
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         super.onDestroy();
     }
 
+    //接口类
     class DataBinder extends IADBAidlInterface.Stub{
 
         private SharedPreferences.Editor bootUPEditor = null;
