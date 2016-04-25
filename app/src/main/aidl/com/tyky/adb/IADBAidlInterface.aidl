@@ -9,7 +9,11 @@ interface IADBAidlInterface {
      * and return values in AIDL.
      */
 
+    //开机自启动开关
     void setBootUP(boolean BootUP);
+    boolean getBootUP();
+
+    //JSON收发
     void sendJData(String strJ);
     String recvJData();
 }

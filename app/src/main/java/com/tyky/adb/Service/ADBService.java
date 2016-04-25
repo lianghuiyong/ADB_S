@@ -1,6 +1,7 @@
 package com.tyky.adb.Service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -8,7 +9,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.tyky.adb.IADBAidlInterface;
-import com.tyky.adb.MainApplication;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,16 +24,17 @@ import java.util.concurrent.Executors;
 public class ADBService extends Service{
 
     private String TAG = "ADBService";
-    final int SERVER_PORT = 17786;
-    volatile boolean isRun = false;
+    private final int SERVER_PORT = 17786;
+    private volatile boolean isRun = false;
     private BufferedWriter date_Out;
     private BufferedReader date_In;
+    private SharedPreferences autoBootUP = null;  //开机启动记录
 
 
     private DataBinder dataBinder = null;
 
     private ServerSocket serverSocket = null;
-    private Socket client;
+    private Socket client = null;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -45,6 +46,7 @@ public class ADBService extends Service{
     public void onCreate() {
         super.onCreate();
         Log.d(TAG,"service开始");
+        autoBootUP =getSharedPreferences("user_BootUP", Context.MODE_PRIVATE);
         this.createServer(SERVER_PORT);
     }
 
@@ -101,18 +103,28 @@ public class ADBService extends Service{
         @Override
         //提交service开机启动开关
         public void setBootUP(boolean BootUP) throws RemoteException {
-            bootUPEditor = MainApplication.autoBootUP.edit();
+            bootUPEditor = autoBootUP.edit();
             bootUPEditor.putBoolean("BootUP",BootUP);
             bootUPEditor.apply();
+            Log.d(TAG, "开机启动："+String.valueOf(BootUP));
+        }
+
+        @Override
+        //获取开机自启动设置
+        public boolean getBootUP() throws RemoteException {
+            Boolean bootUP = autoBootUP.getBoolean("BootUP",false);
+            return bootUP;
         }
 
         @Override
         public void sendJData(String strJ) throws RemoteException {
             try {
-                if(client != null){
+                if(client.isConnected()){
                     date_Out.write(strJ);
                     date_Out.flush();
                     Log.d(TAG,"send ["+client+"] :"+strJ);
+                }else {
+                    Log.d(TAG,"无客户端");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
